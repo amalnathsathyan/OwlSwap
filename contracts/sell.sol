@@ -10,7 +10,7 @@ interface IERC20 {
     function approve(address spender, uint256 amount) external returns (bool);
 }
 
-contract SingleSwap{
+contract SellLink{
     
     address public constant routerAddress = 0xE592427A0AEce92De3Edee1F18E0157C05861564;
     ISwapRouter public constant swapRouter = ISwapRouter(routerAddress);
@@ -25,9 +25,8 @@ contract SingleSwap{
 
     function swapExactInputSingle(uint256 amountIn) external returns (uint256 amountOut) {
     
-        // linkToken.transfer(address(this), amountIn);
+        linkToken.transfer(address(this), amountIn);
         linkToken.approve(address(swapRouter), amountIn);
-
         // Naively set amountOutMinimum to 0. In production, use an oracle or other data source to choose a safer value for amountOutMinimum.
         // We also set the sqrtPriceLimitx96 to be 0 to ensure we swap our exact input amount.
         ISwapRouter.ExactInputSingleParams memory params =
@@ -65,7 +64,7 @@ contract SingleSwap{
                 tokenIn: LINK,
                 tokenOut: WETH,
                 fee: poolFee,
-                recipient: msg.sender,
+                recipient: address(this),
                 deadline: block.timestamp,
                 amountOut: amountOut,
                 amountInMaximum: amountInMaximum,
@@ -79,7 +78,7 @@ contract SingleSwap{
         // If the actual amount spent (amountIn) is less than the specified maximum amount, we must refund the msg.sender and approve the swapRouter to spend 0.
         if (amountIn < amountInMaximum) {
             linkToken.approve(address(swapRouter), 0);
-            linkToken.transfer( msg.sender, amountInMaximum - amountIn);
+            linkToken.transfer( address(this), amountInMaximum - amountIn);
         }
     }
 }

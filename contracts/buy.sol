@@ -10,7 +10,15 @@ interface IERC20 {
     function approve(address spender, uint256 amount) external returns (bool);
 }
 
-contract SingleSwap{
+interface IWETH9 is IERC20 {
+    /// @notice Deposit ether to get wrapped ether
+    function deposit() external payable;
+
+    /// @notice Withdraw wrapped ether to get ether
+    function withdraw(uint256) external;
+}
+
+contract BuyLink{
     
     address public constant routerAddress = 0xE592427A0AEce92De3Edee1F18E0157C05861564;
     ISwapRouter public constant swapRouter = ISwapRouter(routerAddress);
@@ -19,21 +27,22 @@ contract SingleSwap{
     uint24 public constant poolFee = 3000;
 
     IERC20 public linkToken = IERC20(LINK);
+    IERC20 public wethToken = IWETH9(WETH);
 
     constructor() {
     }
 
     function swapExactInputSingle(uint256 amountIn) external returns (uint256 amountOut) {
     
-        // linkToken.transfer(address(this), amountIn);
-        linkToken.approve(address(swapRouter), amountIn);
+        wethToken.transfer(address(this), amountIn);
+        wethToken.approve(address(swapRouter), amountIn);
 
         // Naively set amountOutMinimum to 0. In production, use an oracle or other data source to choose a safer value for amountOutMinimum.
         // We also set the sqrtPriceLimitx96 to be 0 to ensure we swap our exact input amount.
         ISwapRouter.ExactInputSingleParams memory params =
             ISwapRouter.ExactInputSingleParams({
-                tokenIn: LINK,
-                tokenOut: WETH,
+                tokenIn: WETH,
+                tokenOut: LINK,
                 fee: poolFee,
                 recipient: msg.sender,
                 deadline: block.timestamp,
