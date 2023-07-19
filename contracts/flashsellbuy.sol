@@ -6,6 +6,7 @@ import "@aave/core-v3/contracts/flashloan/base/FlashLoanSimpleReceiverBase.sol";
 import "@aave/core-v3/contracts/interfaces/IPoolAddressesProvider.sol";
 import "@aave/core-v3/contracts/dependencies/openzeppelin/contracts/IERC20.sol";
 import '@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol';
+import '@uniswap/v2-periphery/contracts/interfaces/IUniswapV2Router02.sol';
 
 
 interface IWETH9 is IERC20 {
@@ -26,6 +27,8 @@ contract SimpleFlashLoan is FlashLoanSimpleReceiverBase {
     IWETH9 public wethToken = IWETH9(WETH);
     address public constant routerAddress = 0xE592427A0AEce92De3Edee1F18E0157C05861564;
     ISwapRouter public constant swapRouter = ISwapRouter(routerAddress);
+    address public constant v2RouterAddress = 0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D;
+    IUniswapV2Router02 public constant v2Router = IUniswapV2Router02(v2RouterAddress);
     uint24 public constant poolFee = 3000;
 
     
@@ -66,9 +69,10 @@ contract SimpleFlashLoan is FlashLoanSimpleReceiverBase {
         IERC20(asset).approve(address(this),amount);
         swapExactInputSingle(asset, WETH, amount);
         wethToken.approve(address(this), wethToken.balanceOf(address(this)));
-        swapExactInputSingle(WETH, asset,  wethToken.balanceOf(address(this)));
+        uniswapV2Swap(wethToken.balanceOf(address(this)),WETH,LINK);
         IERC20(asset).approve(address(this),IERC20(asset).balanceOf(address(this)));
 
+        //repay
         uint256 totalAmount = amount + premium;
         IERC20(asset).approve(address(POOL), totalAmount);
 
@@ -107,7 +111,7 @@ contract SimpleFlashLoan is FlashLoanSimpleReceiverBase {
     /// @return amountIn The amount of LINK actually spent in the swap.
     function swapExactOutputSingle(address tokenInput, address tokenOutput, uint256 amountOut, uint256 amountInMaximum) internal returns (uint256 amountIn) {
         // Transfer the specified amount of LINK to this contract.
-        IERC20(tokenInput).transfer(address(this), amountInMaximum);
+        // IERC20(tokenInput).transfer(address(this), amountInMaximum);
 
         // Approve the router to spend the specifed `amountInMaximum` of LINK.
         // In production, you should choose the maximum amount to spend based on oracles or other data sources to acheive a better swap.
@@ -135,6 +139,15 @@ contract SimpleFlashLoan is FlashLoanSimpleReceiverBase {
             IERC20(tokenInput).transfer( address(this), amountInMaximum - amountIn);
         }
     }
+
+    function uniswapV2Swap(uint256 amountIn, address tokenInput, address tokenOutput ) internal  {
+        // amountOutMin must be retrieved from an oracle of some kind
+        IERC20(tokenInput).approve(address(v2Router), amountIn);
+        address[] memory path = new address[](2);
+        path[0] = tokenInput;
+        path[1] = tokenOutput;
+        v2Router.swapExactTokensForTokens(amountIn, 0, path, address(this), block.timestamp);
+    } 
 
     receive() external payable {}
 }
