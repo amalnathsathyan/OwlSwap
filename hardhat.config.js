@@ -17,13 +17,8 @@ module.exports = {
   networks: {
     hardhat: {
       forking: {
-        url: process.env.INFURA_GOERLI_ENDPOINT,
-        accounts: [process.env.PRIVATE_KEY],
+        url: process.env.IFURA_MAINNET_URL,
       }
     },
-    goerli: {
-      url: process.env.INFURA_GOERLI_ENDPOINT,
-      accounts: [process.env.PRIVATE_KEY]
-    }
   },
 };
