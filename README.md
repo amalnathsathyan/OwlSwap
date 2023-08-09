@@ -39,18 +39,13 @@ Run: `npm start` to automatically monitor Uniswap v2-v3 arbitrage.
 
 Edit `config.js` for customized arbitrage settings.
 
-```javascript```
- ///////////////////////
-
 ## Testing
-
-To ensure reliability and security, OwlSwap is rigorously tested.
 
 Run tests: `npm test`
 
 ## Contributing
 
-We welcome contributions from the community. Review our [Contribution Guidelines](/path/to/contribution-guidelines).
+We welcome contributions from the community.
 
 ## License
 
