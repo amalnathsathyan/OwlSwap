@@ -141,6 +141,7 @@ contract SimpleFlashLoan is FlashLoanSimpleReceiverBase {
     }
 
     function uniswapV2Swap(uint256 amountIn, address tokenInput, address tokenOutput ) internal  {
+
         // amountOutMin must be retrieved from an oracle of some kind
         IERC20(tokenInput).approve(address(v2Router), amountIn);
         address[] memory path = new address[](2);

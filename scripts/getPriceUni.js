@@ -62,19 +62,19 @@ const comparePrice = async () => {
     //####################################################################################
 }
 
-// //Calculate profit
-// function calculateProfit(v3Price, v2Price) {
-//     let sellPrice, buyPrice;
-//     if (v3Price > v2Price) {
-//         sellPrice = v3Price;
-//         buyPrice = v2Price;
-//     } else if (v2Price > v3Price) {
-//         sellPrice = v2Price;
-//         buyPrice = v3Price;
-//     }
-//     const profit = (sellPrice / buyPrice - 1) * amount;
-//     return profit;
-// }
+//Calculate profit
+function calculateProfit(v3Price, v2Price) {
+    let sellPrice, buyPrice;
+    if (v3Price > v2Price) {
+        sellPrice = v3Price;
+        buyPrice = v2Price;
+    } else if (v2Price > v3Price) {
+        sellPrice = v2Price;
+        buyPrice = v3Price;
+    }
+    const profit = (sellPrice / buyPrice - 1) * amount;
+    return profit;
+}
 
 function calculateProfit(v2Price, v3Price) {
     
