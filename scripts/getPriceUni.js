@@ -16,9 +16,11 @@ const quoter2Address = '0x61fFE014bA17989E743c5F6cB21bF9697530B21e'
 // amount of ether
 const amount = 1000
 const amountIn = ethers.parseEther(`${amount}`);
-const wethAddress = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2'
-const usdtAddress = '0xdAC17F958D2ee523a2206206994597C13D831ec7'
-const usdcAddress = '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48'
+
+const token0Address = '0x5f98805A4E8be255a32880FDeC7F6728C6568bA0'
+const token1Address = '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48'
+
+// const token
 
 const v2Router = new ethers.Contract(v2RouterAddress, v2RouterAbi, provider)
 const quoter2 = new ethers.Contract(quoter2Address, quoter2Abi.abi, provider)
@@ -49,13 +51,14 @@ const getV3Price = async (tokenIn, tokenOut, amountIn) => {
 
 // Compare price
 const comparePrice = async () => {
-    const v2Price = await getV2Price(wethAddress, usdcAddress, amountIn);
-    const v3Price = await getV3Price(wethAddress, usdcAddress, amountIn);
+    const v2Price = await getV2Price(token0Address, token1Address, amountIn);
+    const v3Price = await getV3Price(token0Address, token1Address, amountIn);
 
     //####################################################################################
     const profit = calculateProfit(v3Price, v2Price);
     const [sell, buy] = v3Price > v2Price ? ['v3', 'v2'] : ['v2', 'v3']
     console.log('-----------------------------------------------------------------------')
+    console.log(`${token0Address}`)
     console.log(`Amount : ${amount} | Profit : ${profit} | Buy : ${buy} | Sell : ${sell}`)
     console.log(`v2 price : ${v2Price / amount}`)
     console.log(`v3 price : ${v3Price / amount}`)
@@ -74,10 +77,6 @@ function calculateProfit(v3Price, v2Price) {
     }
     const profit = (sellPrice / buyPrice - 1) * amount;
     return profit;
-}
-
-function calculateProfit(v2Price, v3Price) {
-    
 }
 
 comparePrice()
