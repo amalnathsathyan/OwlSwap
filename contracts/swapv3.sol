@@ -28,7 +28,8 @@ contract SingleSwap{
         // linkToken.transfer(address(this), amountIn);
         linkToken.approve(address(swapRouter), amountIn);
 
-        // Naively set amountOutMinimum to 0. In production, use an oracle or other data source to choose a safer value for amountOutMinimum.
+        // Naively set amountOutMinimum to 0. 
+        //In production, use an oracle or other data source to choose a safer value for amountOutMinimum.
         // We also set the sqrtPriceLimitx96 to be 0 to ensure we swap our exact input amount.
         ISwapRouter.ExactInputSingleParams memory params =
             ISwapRouter.ExactInputSingleParams({
@@ -47,7 +48,8 @@ contract SingleSwap{
     }
 
     /// @notice swapExactOutputSingle swaps a minimum possible amount of LINK for a fixed amount of WETH.
-    /// @dev The calling address must approve this contract to spend its LINK for this function to succeed. As the amount of input LINK is variable,
+    /// @dev The calling address must approve this contract to spend its LINK for this function to succeed. 
+    /// As the amount of input LINK is variable,
     /// the calling address will need to approve for a slightly higher amount, anticipating some variance.
     /// @param amountOut The exact amount of WETH to receive from the swap.
     /// @param amountInMaximum The amount of LINK we are willing to spend to receive the specified amount of WETH.
@@ -57,7 +59,9 @@ contract SingleSwap{
         linkToken.transfer(address(this), amountInMaximum);
 
         // Approve the router to spend the specifed `amountInMaximum` of LINK.
-        // In production, you should choose the maximum amount to spend based on oracles or other data sources to acheive a better swap.
+
+        // In production, you should choose the maximum amount to spend based on oracles or other data sources to 
+        //acheive a better swap.
         linkToken.approve(address(swapRouter), amountInMaximum);
 
         ISwapRouter.ExactOutputSingleParams memory params =
@@ -76,7 +80,8 @@ contract SingleSwap{
         amountIn = swapRouter.exactOutputSingle(params);
 
         // For exact output swaps, the amountInMaximum may not have all been spent.
-        // If the actual amount spent (amountIn) is less than the specified maximum amount, we must refund the msg.sender and approve the swapRouter to spend 0.
+        // If the actual amount spent (amountIn) is less than the specified maximum amount, 
+        //we must refund the msg.sender and approve the swapRouter to spend 0.
         if (amountIn < amountInMaximum) {
             linkToken.approve(address(swapRouter), 0);
             linkToken.transfer( msg.sender, amountInMaximum - amountIn);

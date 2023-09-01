@@ -1,5 +1,8 @@
+require("@nomicfoundation/hardhat-ethers");
 require("@nomicfoundation/hardhat-toolbox");
-require("dotenv").config();
+require("@nomiclabs/hardhat-solhint");
+const dotenv = require('dotenv');
+dotenv.config();
 
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
@@ -17,7 +20,7 @@ module.exports = {
   networks: {
     hardhat: {
       forking: {
-        url: process.env.IFURA_MAINNET_URL,
+        url: process.env.ALCHEMY_ARB_MAINNET_URL
       }
     },
   },
