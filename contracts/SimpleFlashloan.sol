@@ -25,7 +25,7 @@ contract SimpleFlashLoan is FlashLoanSimpleReceiverBase {
     uint24 public constant poolFee = 3000;
 
     IPoolAddressesProvider private constant PROVIDER_ADDRESS =
-        IPoolAddressesProvider(0xC911B590248d127aD18546B186cC6B324e99F02c);
+        IPoolAddressesProvider(0xa97684ead0e402dC232d5A977953DF7ECBaB3CDb);
 
     constructor(
         address _addressProvider
