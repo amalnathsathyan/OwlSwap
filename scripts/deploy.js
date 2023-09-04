@@ -14,7 +14,7 @@ main()
 async function deploySimpleFlashloan() {
   console.log('preparing to deploy a SimpleFlashLoan contract')
   console.log('Getting signer using the provided address')
-  const [signers] = await hre.ethers.getSigners();
+  const [signers] = await hre.ethers.getSigner();
   console.log('Current Signer:', signers[0], ',More Signers:', signers[1], signers[2])
   const FlashLoan = await hre.ethers.deployContract("SimpleFlashLoan", ["0xa97684ead0e402dC232d5A977953DF7ECBaB3CDb"], signers[0]);
   console.log('Deploying.....🧭🧭🧭🧭🧭')

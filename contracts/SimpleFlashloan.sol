@@ -10,10 +10,10 @@ import "@uniswap/v2-periphery/contracts/interfaces/IUniswapV2Router02.sol";
 
 contract SimpleFlashLoan is FlashLoanSimpleReceiverBase {
     address payable owner;
-    address public constant LINK = 0x514910771AF9Ca656af840dff83E8264EcF986CA;
-    address public constant WETH = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
+    address public constant ARB = 0x912CE59144191C1204E64559FE8253a0e49E6548;
+    address public constant WETH = 0x82aF49447D8a07e3bd95BD0d56f35241523fBab1;
 
-    IERC20 public linkToken = IERC20(LINK);
+    IERC20 public linkToken = IERC20(ARB);
     IERC20 public wethToken = IERC20(WETH);
     address public constant routerAddressUniswap =
         0xE592427A0AEce92De3Edee1F18E0157C05861564;
@@ -58,8 +58,8 @@ contract SimpleFlashLoan is FlashLoanSimpleReceiverBase {
     ) external override returns (bool) {
         //logic
         IERC20(asset).approve(address(this), amount);
-        // uniswapV2Swap(amount, WETH, LINK);
-        swapExactInputSingle(LINK, asset, linkToken.balanceOf(address(this)));
+        // uniswapV2Swap(amount, WETH, ARB);
+        swapExactInputSingle(ARB, asset, linkToken.balanceOf(address(this)));
         wethToken.approve(address(this), wethToken.balanceOf(address(this)));
         IERC20(asset).approve(
             address(this),
@@ -100,22 +100,22 @@ contract SimpleFlashLoan is FlashLoanSimpleReceiverBase {
         amountOut = swapRouter.exactInputSingle(params);
     }
 
-    /// @notice swapExactOutputSingle swaps a minimum possible amount of LINK for a fixed amount of WETH.
-    /// @dev The calling address must approve this contract to spend its LINK for this function to succeed. As the amount of input LINK is variable,
+    /// @notice swapExactOutputSingle swaps a minimum possible amount of ARB for a fixed amount of WETH.
+    /// @dev The calling address must approve this contract to spend its ARB for this function to succeed. As the amount of input ARB is variable,
     /// the calling address will need to approve for a slightly higher amount, anticipating some variance.
     /// @param amountOut The exact amount of WETH to receive from the swap.
-    /// @param amountInMaximum The amount of LINK we are willing to spend to receive the specified amount of WETH.
-    /// @return amountIn The amount of LINK actually spent in the swap.
+    /// @param amountInMaximum The amount of ARB we are willing to spend to receive the specified amount of WETH.
+    /// @return amountIn The amount of ARB actually spent in the swap.
     function swapExactOutputSingle(
         address tokenInput,
         address tokenOutput,
         uint256 amountOut,
         uint256 amountInMaximum
     ) internal returns (uint256 amountIn) {
-        // Transfer the specified amount of LINK to this contract.
+        // Transfer the specified amount of ARB to this contract.
         // IERC20(tokenInput).transfer(address(this), amountInMaximum);
 
-        // Approve the router to spend the specifed `amountInMaximum` of LINK.
+        // Approve the router to spend the specifed `amountInMaximum` of ARB.
         // In production, you should choose the maximum amount to spend based on oracles or other data sources to acheive a better swap.
         IERC20(tokenInput).approve(address(swapRouter), amountInMaximum);
 
@@ -146,30 +146,28 @@ contract SimpleFlashLoan is FlashLoanSimpleReceiverBase {
         }
     }
 
-    // function uniswapV2Swap(uint256 amountIn, address tokenInput, address tokenOutput ) internal  {
+    function joeSwap(uint _amountIn){
+        wethToken.approve(address(joeRouterAddress), amountIn);
 
-    //     // amountOutMin must be retrieved from an oracle of some kind
-    //     IERC20(tokenInput).approve(address(v2Router), amountIn);
-    //     address[] memory path = new address[](2);
-    //     path[0] = tokenInput;
-    //     path[1] = tokenOutput;
-    //     v2Router.swapExactTokensForTokens(amountIn, 0, path, address(this), block.timestamp);
-    // }
+        IERC20[] memory tokenPath = new IERC20[](2);
+        tokenPath[0] = WETH;
+        tokenPath[1] = ARB;
 
-    function withdrawTokens(
-        address[] memory _tokens,
-        uint256[] memory _amounts,
-        address _recipient
-    ) public {
-        require(
-            _tokens.length == _amounts.length,
-            "Tokens and amounts arrays must have the same length"
-        );
+        uint256[] memory pairBinSteps = new uint256[](1); // pairBinSteps[i] refers to the bin step for the market (x, y) where tokenPath[i] = x and tokenPath[i+1] = y
+        pairBinSteps[0] = 1;
 
-        for (uint256 i = 0; i < _tokens.length; i++) {
-            IERC20(_tokens[i]).transfer(_recipient, _amounts[i]);
-        }
+        ILBRouter.Version[] memory versions = new ILBRouter.Version[](1);
+        versions[0] = ILBRouter.Version.V2_1; // add the version of the Dex to perform the swap on
+
+        ILBRouter.Path memory path; // instanciate and populate the path to perform the swap.
+        path.pairBinSteps = pairBinSteps;
+        path.versions = versions;
+        path.tokenPath = tokenPath;
+
+        (, uint128 amountOut, ) = router.getSwapOut(pair, amountIn, true);
+        uint256 amountOutWithSlippage = amountOut * 99 / 100 // We allow for 1% slippage
+        uint256 amountOutReal = router.swapExactTokensForTokens(amountIn, amountOutWithSlippage, path, to, block.timestamp + 1);
     }
 
-    receive() external payable {}
+     receive() external payable {}
 }
