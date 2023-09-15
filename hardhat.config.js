@@ -17,11 +17,24 @@ module.exports = {
       version: '0.8.0'
     },]
   },
+  // networks: {
+  //   hardhat: {
+  //     forking: {
+  //       url: process.env.IFURA_ARB_GOERLI_URL
+  //     }
+  //   },
+  // },
+
   networks: {
     hardhat: {
       forking: {
-        url: process.env.ALCHEMY_ARB_MAINNET_URL
+        url: process.env.IFURA_ARB_GOERLI_URL
       }
     },
+
+    arbgoerli: {
+      url: process.env.IFURA_ARB_GOERLI_URL,
+      accounts: [process.env.PRIVATE_KEY]
+    }
   },
 };
