@@ -1,0 +1,6 @@
+{
+    "recommendations": [
+        "hosho.solidity-debugger",
+        "nomicfoundation.hardhat-solidity"
+    ]
+}
