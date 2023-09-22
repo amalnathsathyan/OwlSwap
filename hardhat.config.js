@@ -28,10 +28,10 @@ module.exports = {
   networks: {
     hardhat: {
       forking: {
-        url: process.env.IFURA_ARB_GOERLI_URL
+        url: process.env.IFURA_ARB_GOERLI_URL,
+        accounts: [process.env.PRIVATE_KEY]
       }
     },
-
     arbgoerli: {
       url: process.env.IFURA_ARB_GOERLI_URL,
       accounts: [process.env.PRIVATE_KEY]

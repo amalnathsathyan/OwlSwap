@@ -48,6 +48,8 @@ contract JoeSwap {
             address(this),
             block.timestamp + 1
         );
+
+        return amountOutReal;
     }
 
     receive() external payable {}
