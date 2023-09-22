@@ -1,4 +1,4 @@
-# OwlSwap v2 to v3 Flash Arbitrage
+# OwlSwap Flash Arbitrage
 
 <img src="https://github.com/amalnathsathyan/OwlSwapv2v3/assets/19988098/22bafd32-0bf0-4e15-8de8-43892c26f7fa" width="200" height="200">
 
