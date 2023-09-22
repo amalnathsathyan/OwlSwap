@@ -4,15 +4,16 @@ pragma abicoder v2;
 
 import "@aave/core-v3/contracts/flashloan/base/FlashLoanSimpleReceiverBase.sol";
 import "@aave/core-v3/contracts/interfaces/IPoolAddressesProvider.sol";
-import "@aave/core-v3/contracts/dependencies/openzeppelin/contracts/IERC20.sol";
+import {IERC20} from "@aave/core-v3/contracts/dependencies/openzeppelin/contracts/IERC20.sol";
 import "@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol";
 import "@uniswap/v2-periphery/contracts/interfaces/IUniswapV2Router02.sol";
+import {ILBRouter} from "./interfaces/ILBRouter.sol";
+import {ILBPair} from "./interfaces/ILBPair.sol";
 
 contract SimpleFlashLoan is FlashLoanSimpleReceiverBase {
     address payable owner;
     address public constant ARB = 0x912CE59144191C1204E64559FE8253a0e49E6548;
     address public constant WETH = 0x82aF49447D8a07e3bd95BD0d56f35241523fBab1;
-
     IERC20 public linkToken = IERC20(ARB);
     IERC20 public wethToken = IERC20(WETH);
     address public constant routerAddressUniswap =
@@ -21,15 +22,22 @@ contract SimpleFlashLoan is FlashLoanSimpleReceiverBase {
     address public constant joeRouterAddress =
         0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D;
     // IUniswapV2Router02 public constant v2Router = IUniswapV2Router02(v2RouterAddress);
-
     uint24 public constant poolFee = 3000;
 
     IPoolAddressesProvider private constant PROVIDER_ADDRESS =
         IPoolAddressesProvider(0xa97684ead0e402dC232d5A977953DF7ECBaB3CDb);
 
+    ILBRouter public router;
+    ILBPair public pair;
+
+
     constructor(
         address _addressProvider
-    ) FlashLoanSimpleReceiverBase(IPoolAddressesProvider(_addressProvider)) {}
+    ) FlashLoanSimpleReceiverBase(IPoolAddressesProvider(_addressProvider)) {
+        owner = payable(msg.sender);
+        router = ILBRouter(0x095EEe81B0eC73797424d67e24adab20D5A5D307);
+        pair = ILBPair(0x5a46C8Ac7a2F617312cDF7BB0467A0C2d93d5cb5);
+    }
 
     function fn_RequestFlashLoan(address _token, uint256 _amount) public {
         address receiverAddress = address(this);
@@ -146,12 +154,13 @@ contract SimpleFlashLoan is FlashLoanSimpleReceiverBase {
         }
     }
 
-    function joeSwap(uint _amountIn){
-        wethToken.approve(address(joeRouterAddress), amountIn);
+    function joeSwap(uint128 _amountIn) external returns (uint256) {
+        uint128 amountIn = _amountIn;
+        wethToken.approve(address(router), amountIn);
 
         IERC20[] memory tokenPath = new IERC20[](2);
-        tokenPath[0] = WETH;
-        tokenPath[1] = ARB;
+        tokenPath[0] = linkToken;
+        tokenPath[1] = wethToken;
 
         uint256[] memory pairBinSteps = new uint256[](1); // pairBinSteps[i] refers to the bin step for the market (x, y) where tokenPath[i] = x and tokenPath[i+1] = y
         pairBinSteps[0] = 1;
@@ -165,9 +174,14 @@ contract SimpleFlashLoan is FlashLoanSimpleReceiverBase {
         path.tokenPath = tokenPath;
 
         (, uint128 amountOut, ) = router.getSwapOut(pair, amountIn, true);
-        uint256 amountOutWithSlippage = amountOut * 99 / 100 // We allow for 1% slippage
-        uint256 amountOutReal = router.swapExactTokensForTokens(amountIn, amountOutWithSlippage, path, to, block.timestamp + 1);
+        uint256 amountOutWithSlippage = (amountOut * 99) / 100; // We allow for 1% slippage
+        uint256 amountOutReal = router.swapExactTokensForTokens(
+            amountIn,
+            amountOutWithSlippage,
+            path,
+            address(this),
+            block.timestamp + 1
+        );
     }
-
-     receive() external payable {}
+receive() external payable {}
 }
