@@ -2,7 +2,7 @@ const ethers = require('ethers');
 const dotenv = require('dotenv');
 dotenv.config();
 
-const provider = new ethers.JsonRpcProvider(process.env.ALCHEMY_ARB_MAINNET_URL);
+const provider = new ethers.JsonRpcProvider(process.env.IFURA_ARB_MAINNET_URL);
 
 
 // LBQuoter

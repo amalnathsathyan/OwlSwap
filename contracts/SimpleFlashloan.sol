@@ -8,19 +8,21 @@ import {IERC20} from "@aave/core-v3/contracts/dependencies/openzeppelin/contract
 import "@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol";
 import "@uniswap/v2-periphery/contracts/interfaces/IUniswapV2Router02.sol";
 import {ILBRouter} from "./interfaces/ILBRouter.sol";
-import {ILBPair} from "./interfaces/ILBPair.sol";
+import {ILBPair,IERC20 as IERC20a} from "./interfaces/ILBPair.sol";
 
 contract SimpleFlashLoan is FlashLoanSimpleReceiverBase {
     address payable owner;
-    address public constant ARB = 0x912CE59144191C1204E64559FE8253a0e49E6548;
+    address public constant USDC = 0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8;
     address public constant WETH = 0x82aF49447D8a07e3bd95BD0d56f35241523fBab1;
-    IERC20 public linkToken = IERC20(ARB);
+
+    IERC20 public usdcToken = IERC20(USDC);
     IERC20 public wethToken = IERC20(WETH);
+
     address public constant routerAddressUniswap =
         0xE592427A0AEce92De3Edee1F18E0157C05861564;
     ISwapRouter public constant swapRouter = ISwapRouter(routerAddressUniswap);
     address public constant joeRouterAddress =
-        0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D;
+        0xb4315e873dBcf96Ffd0acd8EA43f689D8c20fB30;
     // IUniswapV2Router02 public constant v2Router = IUniswapV2Router02(v2RouterAddress);
     uint24 public constant poolFee = 3000;
 
@@ -35,8 +37,8 @@ contract SimpleFlashLoan is FlashLoanSimpleReceiverBase {
         address _addressProvider
     ) FlashLoanSimpleReceiverBase(IPoolAddressesProvider(_addressProvider)) {
         owner = payable(msg.sender);
-        router = ILBRouter(0x095EEe81B0eC73797424d67e24adab20D5A5D307);
-        pair = ILBPair(0x5a46C8Ac7a2F617312cDF7BB0467A0C2d93d5cb5);
+        router = ILBRouter(0xb4315e873dBcf96Ffd0acd8EA43f689D8c20fB30);
+        pair = ILBPair(0x94d53BE52706a155d27440C4a2434BEa772a6f7C);
     }
 
     function fn_RequestFlashLoan(address _token, uint256 _amount) public {
@@ -66,8 +68,8 @@ contract SimpleFlashLoan is FlashLoanSimpleReceiverBase {
     ) external override returns (bool) {
         //logic
         IERC20(asset).approve(address(this), amount);
-        // uniswapV2Swap(amount, WETH, ARB);
-        swapExactInputSingle(ARB, asset, linkToken.balanceOf(address(this)));
+        // uniswapV2Swap(amount, WETH, USDC);
+        swapExactInputSingle(USDC, asset, usdcToken.balanceOf(address(this)));
         wethToken.approve(address(this), wethToken.balanceOf(address(this)));
         IERC20(asset).approve(
             address(this),
@@ -86,7 +88,7 @@ contract SimpleFlashLoan is FlashLoanSimpleReceiverBase {
         address tokenOutput,
         uint256 amountIn
     ) internal returns (uint256 amountOut) {
-        // linkToken.transfer(address(this), amountIn);
+        // usdcToken.transfer(address(this), amountIn);
         IERC20(tokenInput).approve(address(swapRouter), amountIn);
 
         // Naively set amountOutMinimum to 0. In production, use an oracle or other data source to choose a
@@ -108,22 +110,22 @@ contract SimpleFlashLoan is FlashLoanSimpleReceiverBase {
         amountOut = swapRouter.exactInputSingle(params);
     }
 
-    /// @notice swapExactOutputSingle swaps a minimum possible amount of ARB for a fixed amount of WETH.
-    /// @dev The calling address must approve this contract to spend its ARB for this function to succeed. As the amount of input ARB is variable,
+    /// @notice swapExactOutputSingle swaps a minimum possible amount of USDC for a fixed amount of WETH.
+    /// @dev The calling address must approve this contract to spend its USDC for this function to succeed. As the amount of input USDC is variable,
     /// the calling address will need to approve for a slightly higher amount, anticipating some variance.
     /// @param amountOut The exact amount of WETH to receive from the swap.
-    /// @param amountInMaximum The amount of ARB we are willing to spend to receive the specified amount of WETH.
-    /// @return amountIn The amount of ARB actually spent in the swap.
+    /// @param amountInMaximum The amount of USDC we are willing to spend to receive the specified amount of WETH.
+    /// @return amountIn The amount of USDC actually spent in the swap.
     function swapExactOutputSingle(
         address tokenInput,
         address tokenOutput,
         uint256 amountOut,
         uint256 amountInMaximum
     ) internal returns (uint256 amountIn) {
-        // Transfer the specified amount of ARB to this contract.
+        // Transfer the specified amount of USDC to this contract.
         // IERC20(tokenInput).transfer(address(this), amountInMaximum);
 
-        // Approve the router to spend the specifed `amountInMaximum` of ARB.
+        // Approve the router to spend the specifed `amountInMaximum` of USDC.
         // In production, you should choose the maximum amount to spend based on oracles or other data sources to acheive a better swap.
         IERC20(tokenInput).approve(address(swapRouter), amountInMaximum);
 
@@ -158,9 +160,9 @@ contract SimpleFlashLoan is FlashLoanSimpleReceiverBase {
         uint128 amountIn = _amountIn;
         wethToken.approve(address(router), amountIn);
 
-        IERC20[] memory tokenPath = new IERC20[](2);
-        tokenPath[0] = linkToken;
-        tokenPath[1] = wethToken;
+        IERC20a[] memory tokenPath = new IERC20a[](2);
+        tokenPath[0] = IERC20a(WETH);
+        tokenPath[1] = IERC20a(USDC);
 
         uint256[] memory pairBinSteps = new uint256[](1); // pairBinSteps[i] refers to the bin step for the market (x, y) where tokenPath[i] = x and tokenPath[i+1] = y
         pairBinSteps[0] = 1;
