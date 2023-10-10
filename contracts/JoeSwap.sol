@@ -1,13 +1,14 @@
 pragma solidity 0.8.10;
 
 import {ILBRouter} from "./interfaces/ILBRouter.sol";
-import {ILBPair} from "./interfaces/ILBPair.sol";
-import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+// import {ILBPair} from "./interfaces/ILBPair.sol";
+// import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import {IERC20, ILBPair} from "./interfaces/ILBPair.sol";
 
 contract JoeSwap {
     address payable public owner;
-    address public constant USDC = 0xb3482A25a12e5261b02E0acc5b96c656358a4086; // USDC-goerli
-    address public constant WETH = 0xaE4EC9901c3076D0DdBe76A520F9E90a6227aCB7; // WETH-goerli
+    address public constant USDC = 0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8; // USDC
+    address public constant WETH = 0x82aF49447D8a07e3bd95BD0d56f35241523fBab1; // WETH
 
     IERC20 public usdc = IERC20(USDC);
     IERC20 public weth = IERC20(WETH);
@@ -16,8 +17,8 @@ contract JoeSwap {
 
     constructor() {
         owner = payable(msg.sender);
-        router = ILBRouter(0x095EEe81B0eC73797424d67e24adab20D5A5D307);
-        pair = ILBPair(0x5a46C8Ac7a2F617312cDF7BB0467A0C2d93d5cb5);
+        router = ILBRouter(0xb4315e873dBcf96Ffd0acd8EA43f689D8c20fB30);
+        pair = ILBPair(0x94d53BE52706a155d27440C4a2434BEa772a6f7C);
     }
 
     function joeSwap(uint128 _amountIn) external returns (uint256) {
@@ -25,8 +26,8 @@ contract JoeSwap {
         weth.approve(address(router), amountIn);
 
         IERC20[] memory tokenPath = new IERC20[](2);
-        tokenPath[0] = weth;
-        tokenPath[1] = usdc;
+        tokenPath[0] = IERC20(WETH);
+        tokenPath[1] = IERC20(USDC);
 
         uint256[] memory pairBinSteps = new uint256[](1); // pairBinSteps[i] refers to the bin step for the market (x, y) where tokenPath[i] = x and tokenPath[i+1] = y
         pairBinSteps[0] = 1;
