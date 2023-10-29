@@ -29,12 +29,8 @@ module.exports = {
     hardhat: {
       forking: {
         url: process.env.IFURA_ARB_MAINNET_URL,
-        accounts: [process.env.PRIVATE_KEY]
+        accounts: [process.env.PRIVATE_KEY],
       }
-    },
-    arbgoerli: {
-      url: process.env.IFURA_ARB_MAINNET_URL,
-      accounts: [process.env.PRIVATE_KEY]
     }
   },
 };

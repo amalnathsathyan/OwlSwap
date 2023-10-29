@@ -67,21 +67,15 @@ contract SimpleFlashLoan is FlashLoanSimpleReceiverBase {
         bytes calldata params
     ) external override returns (bool) {
         //logic
-        IERC20(asset).approve(address(this), amount);
-        // uniswapV2Swap(amount, WETH, USDC);
-        swapExactInputSingle(USDC, asset, usdcToken.balanceOf(address(this)));
-        wethToken.approve(address(this), wethToken.balanceOf(address(this)));
-        IERC20(asset).approve(
-            address(this),
-            IERC20(asset).balanceOf(address(this))
-        );
+    
 
         //repay
         uint256 totalAmount = amount + premium;
         IERC20(asset).approve(address(POOL), totalAmount);
-
         return true;
     }
+
+    //uniswapv3 swap
 
     function swapExactInputSingle(
         address tokenInput,
@@ -156,10 +150,12 @@ contract SimpleFlashLoan is FlashLoanSimpleReceiverBase {
         }
     }
 
+    //traderJoe
+
     function joeSwap(uint128 _amountIn) external returns (uint256) {
+
         uint128 amountIn = _amountIn;
         wethToken.approve(address(router), amountIn);
-
         IERC20a[] memory tokenPath = new IERC20a[](2);
         tokenPath[0] = IERC20a(WETH);
         tokenPath[1] = IERC20a(USDC);
@@ -185,5 +181,6 @@ contract SimpleFlashLoan is FlashLoanSimpleReceiverBase {
             block.timestamp + 1
         );
     }
-receive() external payable {}
+    
+    receive() external payable {}
 }

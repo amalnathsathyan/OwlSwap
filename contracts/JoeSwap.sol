@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 pragma solidity 0.8.10;
 
 import {ILBRouter} from "./interfaces/ILBRouter.sol";
@@ -5,13 +6,19 @@ import {ILBRouter} from "./interfaces/ILBRouter.sol";
 // import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {IERC20, ILBPair} from "./interfaces/ILBPair.sol";
 
+interface IWETH is IERC20 {
+    function deposit() external payable;
+    function transfer(address to, uint value) external returns (bool);
+    function withdraw(uint) external;
+}
+
 contract JoeSwap {
     address payable public owner;
-    address public constant USDC = 0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8; // USDC
-    address public constant WETH = 0x82aF49447D8a07e3bd95BD0d56f35241523fBab1; // WETH
+    address public constant USDC = 0xfc5A1A6EB076a2C7aD06eD22C90d7E710E35ad0a; // GMX
+    address public constant WETH = 0x82aF49447D8a07e3bd95BD0d56f35241523fBab1 ; // WETH
 
     IERC20 public usdc = IERC20(USDC);
-    IERC20 public weth = IERC20(WETH);
+    IERC20 public weth = IWETH(WETH);
     ILBRouter public router;
     ILBPair public pair;
 
@@ -21,8 +28,24 @@ contract JoeSwap {
         pair = ILBPair(0x94d53BE52706a155d27440C4a2434BEa772a6f7C);
     }
 
+    modifier onlyOwner {
+        require(msg.sender == owner);
+        _;
+    }
+
+    function harvest(address _token) external onlyOwner {
+        uint256 tokenBalance = IERC20(_token).balanceOf(address(this));
+        IERC20(_token).transfer(owner,tokenBalance);
+    }
+
+    function recoverEth() external onlyOwner {
+        payable(owner).transfer(address(this).balance);
+    }
+
     function joeSwap(uint128 _amountIn) external returns (uint256) {
         uint128 amountIn = _amountIn;
+        
+        weth.approve(address(this), amountIn);
         weth.approve(address(router), amountIn);
 
         IERC20[] memory tokenPath = new IERC20[](2);
@@ -40,7 +63,7 @@ contract JoeSwap {
         path.versions = versions;
         path.tokenPath = tokenPath;
 
-        (, uint128 amountOut, ) = router.getSwapOut(pair, amountIn, true);
+        (, uint128 amountOut,) = router.getSwapOut(pair, amountIn, true);
         uint256 amountOutWithSlippage = (amountOut * 99) / 100; // We allow for 1% slippage
         uint256 amountOutReal = router.swapExactTokensForTokens(
             amountIn,
