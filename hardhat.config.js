@@ -6,6 +6,7 @@ dotenv.config();
 
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
+  defaultNetwork: "hardhat",
   solidity: {
     compilers: [{
       version: '0.7.6',
@@ -29,12 +30,16 @@ module.exports = {
     hardhat: {
       forking: {
         url: process.env.IFURA_ARB_MAINNET_URL,
-        accounts: [process.env.PRIVATE_KEY]
+        accounts: [process.env.PRIVATE_KEY],
+        blockNumber:145688281
       }
     },
-    arbgoerli: {
-      url: process.env.IFURA_ARB_MAINNET_URL,
-      accounts: [process.env.PRIVATE_KEY]
-    }
-  },
-};
+    arbitrum: {
+        url: process.env.IFURA_ARB_MAINNET_URL,
+        accounts: [process.env.PRIVATE_KEY],
+      }
+    },
+  mocha:{
+    timeout:600000
+  }
+  }

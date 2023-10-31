@@ -20,6 +20,7 @@
     "@typechain/hardhat": "^8.0.3",
     "@types/chai": "^4.3.7",
     "@types/mocha": "^10.0.2",
+    "@types/node": "^20.8.4",
     "autoprefixer": "^10.4.15",
     "ethers": "^6.7.1",
     "hardhat": "^2.16.1",

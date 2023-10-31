@@ -10,9 +10,9 @@ import "@uniswap/v2-periphery/contracts/interfaces/IUniswapV2Router02.sol";
 import {ILBRouter} from "./interfaces/ILBRouter.sol";
 import {ILBPair,IERC20 as IERC20a} from "./interfaces/ILBPair.sol";
 
-contract SimpleFlashLoan is FlashLoanSimpleReceiverBase {
+contract OwlSwap is FlashLoanSimpleReceiverBase {
     address payable owner;
-    address public constant USDC = 0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8;
+    address public constant USDC = 0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8; //GMX
     address public constant WETH = 0x82aF49447D8a07e3bd95BD0d56f35241523fBab1;
 
     IERC20 public usdcToken = IERC20(USDC);
@@ -67,21 +67,19 @@ contract SimpleFlashLoan is FlashLoanSimpleReceiverBase {
         bytes calldata params
     ) external override returns (bool) {
         //logic
-        IERC20(asset).approve(address(this), amount);
-        // uniswapV2Swap(amount, WETH, USDC);
-        swapExactInputSingle(USDC, asset, usdcToken.balanceOf(address(this)));
-        wethToken.approve(address(this), wethToken.balanceOf(address(this)));
-        IERC20(asset).approve(
-            address(this),
-            IERC20(asset).balanceOf(address(this))
-        );
-
+        IERC20(asset).approve(address(this),amount);
+        //calling JoeSwap
+        uint128 _amount = uint128(amount);
+        joeSwap(_amount);
+        //calling uniswap
+        swapExactInputSingle(USDC,WETH,IERC20(USDC).balanceOf(address(this)));
         //repay
         uint256 totalAmount = amount + premium;
         IERC20(asset).approve(address(POOL), totalAmount);
-
         return true;
     }
+
+    //uniswapv3 swap
 
     function swapExactInputSingle(
         address tokenInput,
@@ -156,10 +154,12 @@ contract SimpleFlashLoan is FlashLoanSimpleReceiverBase {
         }
     }
 
-    function joeSwap(uint128 _amountIn) external returns (uint256) {
+    //traderJoe
+
+    function joeSwap(uint128 _amountIn) internal returns (uint256) {
+
         uint128 amountIn = _amountIn;
         wethToken.approve(address(router), amountIn);
-
         IERC20a[] memory tokenPath = new IERC20a[](2);
         tokenPath[0] = IERC20a(WETH);
         tokenPath[1] = IERC20a(USDC);
@@ -184,6 +184,8 @@ contract SimpleFlashLoan is FlashLoanSimpleReceiverBase {
             address(this),
             block.timestamp + 1
         );
+        return amountOutReal;
     }
-receive() external payable {}
+    
+    receive() external payable {}
 }

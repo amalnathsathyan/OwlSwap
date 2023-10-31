@@ -17,7 +17,7 @@ const amountIn = ethers.parseEther('5');
 const amount = 5
 //$LINK&WETH
 const token0Address = '0x82aF49447D8a07e3bd95BD0d56f35241523fBab1'; //WETH
-const token1Address = '0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8'; //USDC
+const token1Address = '0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8'; //GMX
 const erc20Abi = require('./IERC20.json');
 // initialising contracts
 const quoter2 = new ethers.Contract(quoter2Address, quoter2Abi.abi, provider);
@@ -65,15 +65,19 @@ const priceFetch = async () => {
   const profit = calculateProfit(dex2Price, dex1Price);
   const [sell, buy] = dex2Price > dex1Price ? ['uniswap', 'joe'] : ['joe', 'uniswap'];
   console.log('-----------------------------------------------------------------------');
-  console.log(`COIN: ${token0Address}`);
+  console.log(`COIN: ${token1Address}`);
   console.log(`Profit : ${profit} | Buy : ${buy} | Sell : ${sell}`);
     console.log(`joe price : ${dex1Price / amount}`);
     console.log(`uniswap price : ${dex2Price / amount}`);
+
+    const profitInUSD = profit*1800;
+    console.log(`########## EXPECTED PROFIT:$ ${profitInUSD}###########`)
   //####################################################################################
   return {
     sellDex: dex2Price>dex1Price ? 'uniswap' : 'joe',
     buyDex: dex2Price<dex1Price ? 'uniswap' : 'joe',
     profit: profit,
+    profitInUSD : profitInUSD
   }
 };
 
@@ -89,8 +93,9 @@ function calculateProfit(dex2Price, dex1Price) {
   }
   console.log('sellPrice', sellPrice);
   console.log('buyPrice', buyPrice);
-    const profit = ((sellPrice / buyPrice - 1) * amount) - 0.0008*amount;
+    const profit = ((sellPrice / buyPrice - 1) * amount) - 0.0005*amount;
     return profit;
 }
 
-module.exports = {priceFetch};
+// module.exports = {priceFetch};
+priceFetch();
