@@ -1,9 +1,9 @@
-# OwlSwap Flash Arbitrage
 # OwlSwap: Unlocking DeFi For Masses 🦉
 
 <img src="https://github.com/amalnathsathyan/OwlSwapv2v3/assets/19988098/22bafd32-0bf0-4e15-8de8-43892c26f7fa" width="200" height="200">
 
 Revolutionize DEX arbitrage with OwlSwap's flash loan integration between Uniswap and TraderJoe on the Arbitrum chain. We're in the midst of groundbreaking research and development for OwlSwap V2.
+
 
 ## Introduction
 
@@ -31,6 +31,7 @@ OwlSwap is your gateway to the world of DeFi and automated trading, offering tra
 3. Install Dependencies: `npm install`
 4. Configure: Refer to the [Configuration](#configuration) section.
 
+
 ## Usage
 
 Run: `npm start` to automatically monitor Uniswap V2-TraderJoe arbitrage opportunities.
@@ -46,7 +47,9 @@ Execute tests: `npm test`
 ## Contributing
 
 We welcome contributions from the community. I have just started a dashboard on notion: `https://www.notion.so/6c9c5ca916fa4e9688187c231d516686?v=ae5540f0d8ec4bf0ba7f632635266ec5&pvs=4`
+
 We welcome contributions from the community. Check out our [Notion dashboard](https://www.notion.so/6c9c5ca916fa4e9688187c231d516686?v=ae5540f0d8ec4bf0ba7f632635266ec5&pvs=4) for more information.
+
 
 ## License
 
