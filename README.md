@@ -3,7 +3,7 @@
 <img src="https://github.com/amalnathsathyan/OwlSwapv2v3/assets/19988098/22bafd32-0bf0-4e15-8de8-43892c26f7fa" width="200" height="200">
 
 
-Revolutionize DEX arbitrage with OwlSwap's flash loan integration between Uniswap v2 and v3.
+Revolutionize DEX arbitrage with OwlSwap's flash loan integration between Uniswap and TraderJoe on arbitrum chain. R&D going on for OwlSwap V2. 
 
 ## Introduction
 
@@ -26,8 +26,8 @@ OwlSwap combines DeFi and automated trading, enabling traders to profit from Uni
 
 ## Getting Started
 
-1. Clone: `git clone https://github.com/amalnathsathyan/OwlSwap-v2v3.git`
-2. Navigate: `cd OwlSwap-v2v3`
+1. Clone: `git clone https://github.com/amalnathsathyan/OwlSwap.git`
+2. Navigate: `cd OwlSwap`
 3. Install: `npm install`
 4. Configure: See [Configuration](#configuration).
 
