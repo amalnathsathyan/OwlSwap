@@ -1,17 +1,17 @@
 # OwlSwap: Unlocking DeFi For Masses 🦉
 
-<img src="https://github.com/amalnathsathyan/OwlSwapv2v3/assets/19988098/22bafd32-0bf0-4e15-8de8-43892c26f7fa" width="200" height="200">
+<img src="https://github.com/amalnathsathyan/OwlSwapv3v3/assets/19988098/22bafd32-0bf0-4e15-8de8-43892c26f7fa" width="200" height="200">
 
 Revolutionize DEX arbitrage with OwlSwap's flash loan integration between Uniswap and TraderJoe on the Arbitrum chain. We're in the midst of groundbreaking research and development for OwlSwap V2.
 
 
 ## Introduction
 
-OwlSwap is your gateway to the world of DeFi and automated trading, offering traders the opportunity to profit from Uniswap V2-TraderJoe price disparities using flash loans.
+OwlSwap is your gateway to the world of DeFi and automated trading, offering traders the opportunity to profit from UniswapV3-TraderJoe price disparities using flash loans.
 
 ## How It Works
 
-1. **Spotting Opportunities**: OwlSwap continually monitors Uniswap V2-TraderJoe price differences.
+1. **Spotting Opportunities**: OwlSwap continually monitors Uniswap V3-TraderJoe price differences.
 
 2. **Flash Loan Magic**: When profit potential is identified, OwlSwap leverages Aave flash loans to secure trading capital.
 
@@ -34,7 +34,7 @@ OwlSwap is your gateway to the world of DeFi and automated trading, offering tra
 
 ## Usage
 
-Run: `npm start` to automatically monitor Uniswap V2-TraderJoe arbitrage opportunities.
+Run: `npm start` to automatically monitor Uniswap v3-TraderJoe arbitrage opportunities.
 
 ## Configuration
 
