@@ -1,6 +1,6 @@
 # OwlSwap: Unlocking DeFi For Masses 🦉
 
-<img src="https://github.com/amalnathsathyan/OwlSwapv3v3/assets/19988098/22bafd32-0bf0-4e15-8de8-43892c26f7fa" width="200" height="200">
+<img src="https://github.com/amalnathsathyan/OwlSwapv2v3/assets/19988098/22bafd32-0bf0-4e15-8de8-43892c26f7fa" width="200" height="200">
 
 Revolutionize DEX arbitrage with OwlSwap's flash loan integration between Uniswap and TraderJoe on the Arbitrum chain. We're in the midst of groundbreaking research and development for OwlSwap V2.
 
