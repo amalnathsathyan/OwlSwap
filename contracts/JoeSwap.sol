@@ -42,7 +42,7 @@ contract JoeSwap {
         payable(owner).transfer(address(this).balance);
     }
 
-    function joeSwap(uint128 _amountIn) external returns (uint256) {
+    function joeSwap(uint128 _amountIn) internal {
         uint128 amountIn = _amountIn;
         
         weth.approve(address(this), amountIn);
@@ -72,8 +72,6 @@ contract JoeSwap {
             address(this),
             block.timestamp + 1
         );
-
-        return amountOutReal;
     }
 
     receive() external payable {}
