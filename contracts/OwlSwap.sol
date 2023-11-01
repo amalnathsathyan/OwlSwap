@@ -32,6 +32,8 @@ contract OwlSwap is FlashLoanSimpleReceiverBase {
     ILBRouter public router;
     ILBPair public pair;
 
+    event FlashloanSucessFul(bool status);
+
 
     constructor(
         address _addressProvider
@@ -77,6 +79,7 @@ contract OwlSwap is FlashLoanSimpleReceiverBase {
         uint256 totalAmount = amount + premium;
         IERC20(asset).approve(address(POOL), totalAmount);
         return true;
+        emit FlashloanSucessFul(true);
     }
 
     //uniswapv3 swap
