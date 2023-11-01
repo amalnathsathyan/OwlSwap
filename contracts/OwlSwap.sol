@@ -12,7 +12,8 @@ import {ILBPair,IERC20 as IERC20a} from "./interfaces/ILBPair.sol";
 
 contract OwlSwap is FlashLoanSimpleReceiverBase {
     address payable owner;
-    address public constant USDC = 0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8; //GMX
+    // address public constant USDC = 0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8; //USDC
+    address public constant USDC = 0xfc5A1A6EB076a2C7aD06eD22C90d7E710E35ad0a; //GMX
     address public constant WETH = 0x82aF49447D8a07e3bd95BD0d56f35241523fBab1;
 
     IERC20 public usdcToken = IERC20(USDC);
@@ -32,7 +33,9 @@ contract OwlSwap is FlashLoanSimpleReceiverBase {
     ILBRouter public router;
     ILBPair public pair;
 
-    event FlashloanSucessFul(bool status);
+    event FlashloanSucessFul(bool);
+    event FirstSwap(bool);
+    event SecondSwap(bool,uint256 amountAfterSwap2);
 
 
     constructor(
@@ -71,12 +74,17 @@ contract OwlSwap is FlashLoanSimpleReceiverBase {
         //logic
         IERC20(asset).approve(address(this),amount);
         //calling JoeSwap
-        uint128 _amount = uint128(amount);
-        joeSwap(_amount);
+        // uint128 _amount = uint128(amount);
+        // joeSwap(_amount);
         //calling uniswap
-        swapExactInputSingle(USDC,WETH,IERC20(USDC).balanceOf(address(this)));
+        uint256 amountOutAfterSwap1 = swapExactInputSingle(asset,USDC,amount);
+        emit FirstSwap(true);
+        usdcToken.approve(address(this),amountOutAfterSwap1);
+        uint256 amountOutAfterSwap2 = swapExactInputSingle(USDC,asset,amountOutAfterSwap1);
+        emit SecondSwap(true,amountOutAfterSwap2);
         //repay
         uint256 totalAmount = amount + premium;
+        require(totalAmount < IERC20(asset).balanceOf(address(this)),'Not WETH Enough To Repay');
         IERC20(asset).approve(address(POOL), totalAmount);
         return true;
         emit FlashloanSucessFul(true);

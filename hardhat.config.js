@@ -31,7 +31,7 @@ module.exports = {
       forking: {
         url: process.env.IFURA_ARB_MAINNET_URL,
         accounts: [process.env.PRIVATE_KEY],
-        blockNumber:145688281
+        blockNumber:146130936
       }
     },
     arbitrum: {

@@ -17,9 +17,9 @@ const amountIn = ethers.parseEther('5');
 const amount = 5
 //$LINK&WETH
 const token0Address = '0x82aF49447D8a07e3bd95BD0d56f35241523fBab1'; //WETH
-// const token1Address = '0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8'; //GMX
+const token1Address = '0xfc5A1A6EB076a2C7aD06eD22C90d7E710E35ad0a'; //GMX
 // const token1Address = '0x912CE59144191C1204E64559FE8253a0e49E6548'//ARB
-const token1Address = '0x2f2a2543B76A4166549F7aaB2e75Bef0aefC5B0f'//ARB
+// const token1Address = '0x2f2a2543B76A4166549F7aaB2e75Bef0aefC5B0f'//ARB
 const erc20Abi = require('./IERC20.json');
 // initialising contracts
 const quoter2 = new ethers.Contract(quoter2Address, quoter2Abi.abi, provider);
@@ -33,7 +33,7 @@ const getDex1Price = async () => {
     console.log('***Route******', route);
     const quote = await LBQuoter.findBestPathFromAmountIn.staticCall(route, amountIn);
     console.log('***JOE-Quote*****', quote);
-    const price = ethers.formatUnits((quote.amounts[1]).toString(), 6);
+    const price = ethers.formatUnits((quote.amounts[1]).toString(), 18);
     return price;
   } catch (error) {
     console.log(error);
@@ -52,7 +52,7 @@ const getDex2Price = async () => {
     };
     const output = await quoter2.quoteExactInputSingle.staticCall(params);
     console.log('*******UNISWAP-QUOTE*****', output)
-    const price = ethers.formatUnits(output.amountOut.toString(), 6);
+    const price = ethers.formatUnits(output.amountOut.toString(), 18);
     return price;
   } catch (error) {
     console.log(error);
