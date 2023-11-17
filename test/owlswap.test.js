@@ -45,9 +45,10 @@ describe('OwlSwap v1 Core Contract Unit Tests', function () {
     expect(initialWethBalance).to.equal(ethers.parseEther('0.5'))
     console.log(`The OwlSwap contract has ${await WETH.balanceOf(deploymentAddr)} wei and approval is pending to execute flashloan`);
     const flashArbTx = await owlSwap.fn_RequestFlashLoan(wethAddress, ethers.parseEther('1.5'));
+    console.log(flashArbTx);
     expect(flashArbTx).to.emit(owlSwap,'FirstSwap');
     expect(flashArbTx).to.emit(owlSwap,'TraderJoe');
-    console.log('First Swap success On Uniswap')
+    console.log('First Swap success On Uniswap');
     expect(flashArbTx).to.emit(owlSwap,'SecondSwap');
     console.log('Second Swap success On TraderJoe')
     console.log(`OwlSwap flashloan arbitrage tx Succeeds with hash: ${flashArbTx.hash} and the log: ${await flashArbTx}`);
