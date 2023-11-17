@@ -31,7 +31,7 @@ contract OwlSwap is FlashLoanSimpleReceiverBase {
     ILBRouter public router;
     ILBPair public pair;
 
-    event FirstSwap(bool success);
+    event FirstSwap(bool success, uint swapOutAmount);
     event SecondSwap(bool success);
     event TraderJoe(uint256 output);
 
@@ -73,7 +73,7 @@ contract OwlSwap is FlashLoanSimpleReceiverBase {
 
           //calling uniswap
         uint256 amountOutAfterSwap1 = joeSwap(WETH,USDC,amount);
-        emit FirstSwap(true);
+        emit FirstSwap(true, amountOutAfterSwap1);
 
         IERC20(USDC).approve(address(this),amountOutAfterSwap1);
         //calling joe
