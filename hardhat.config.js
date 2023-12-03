@@ -2,6 +2,7 @@ require("@nomicfoundation/hardhat-ethers");
 require("@nomicfoundation/hardhat-toolbox");
 require("@nomiclabs/hardhat-solhint");
 const dotenv = require('dotenv');
+
 dotenv.config();
 
 /** @type import('hardhat/config').HardhatUserConfig */
@@ -31,7 +32,7 @@ module.exports = {
       forking: {
         url: process.env.IFURA_ARB_MAINNET_URL,
         accounts: [process.env.PRIVATE_KEY],
-        blockNumber:145688281
+        blockNumber:146253818
       }
     },
     arbitrum: {
