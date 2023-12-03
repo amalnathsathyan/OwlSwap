@@ -72,13 +72,13 @@ contract OwlSwap is FlashLoanSimpleReceiverBase {
         IERC20(asset).approve(address(this),amount);
 
           //calling uniswap
-        uint256 amountOutAfterSwap1 = joeSwap(WETH,USDC,amount);
+        uint256 amountOutAfterSwap1 = swapExactInputSingle(USDC,WETH,amount);
         emit FirstSwap(true, amountOutAfterSwap1);
 
         IERC20(USDC).approve(address(this),amountOutAfterSwap1);
         //calling joe
         
-        uint256 amountOutAfterSwap2 = swapExactInputSingle(USDC,WETH,amountOutAfterSwap1);
+        uint256 amountOutAfterSwap2 = joeSwap(WETH,USDC,amountOutAfterSwap1);
         emit SecondSwap(true);
 
         //repay
